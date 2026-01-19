@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: remembering-concepts-&-learning-spring-security
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:learning-spring-security}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    hikari:
+      initialization-fail-timeout: 0
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+
+logging:
+  level:
+    org.hibernate.orm.mapping: WARN
+    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: OFF
+
