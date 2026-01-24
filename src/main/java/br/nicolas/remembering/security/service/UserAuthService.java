@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
-@AllArgsConstructor
+@Service @AllArgsConstructor
 public class UserAuthService implements UserDetailsService {
 
     private StudentRepository studentRepository;
@@ -26,11 +25,9 @@ public class UserAuthService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         Optional<Student> studentByEmail = studentRepository.findByEmail(email);
-
         if (studentByEmail.isPresent()) return new StudentDetailsImpl(studentByEmail.get());
 
         Optional<Teacher> teacherByEmail = teacherRepository.findByEmail(email);
-
         if (teacherByEmail.isPresent()) return new TeacherDetailsImpl(teacherByEmail.get());
 
         throw new UsernameNotFoundException("User not found");

@@ -5,15 +5,24 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:learning-spring-security}
     username: ${SPRING_DATASOURCE_USERNAME:sa}
     password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
     hikari:
       initialization-fail-timeout: 0
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
+    baseline-on-migration: true
+    locations: classpath:db/migration
 
 logging:
   level:
-    org.hibernate.orm.mapping: WARN
+    org:
+      hibernate:
+        SQL: DEBUG
+
     org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: OFF
 

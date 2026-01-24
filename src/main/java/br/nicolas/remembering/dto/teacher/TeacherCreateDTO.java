@@ -7,8 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
-@Getter
+@Builder @Getter
 public class TeacherCreateDTO {
 
     @NotNull (message = "The teacher name can not be null")
@@ -19,7 +18,7 @@ public class TeacherCreateDTO {
     @Email (message = "The teacher email has be valid")
     @NotNull (message = "The teacher email can not be null")
     @NotBlank (message = "The teacher email can not be blank")
-    @Size (min = 12, max = 75, message = "The teacher email length has to be between 12 and 75")
+    @Size (min = 12, max = 50, message = "The teacher email length has to be between 12 and 50")
     private String email;
 
     @NotNull (message = "The teacher password can not be null")

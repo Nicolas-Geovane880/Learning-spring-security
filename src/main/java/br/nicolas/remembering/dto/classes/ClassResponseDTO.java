@@ -1,4 +1,4 @@
-package br.nicolas.remembering.dto.clasS;
+package br.nicolas.remembering.dto.classes;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,8 +8,6 @@ import lombok.Getter;
 public class ClassResponseDTO {
 
     private Long id;
-
-    private String name;
 
     private String discipline;
 

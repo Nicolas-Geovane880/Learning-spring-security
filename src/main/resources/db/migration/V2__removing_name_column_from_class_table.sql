@@ -1,0 +1,1 @@
+ALTER TABLE class DROP COLUMN class_name

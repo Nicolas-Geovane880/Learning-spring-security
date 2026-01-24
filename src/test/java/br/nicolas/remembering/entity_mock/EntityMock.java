@@ -6,8 +6,6 @@ import br.nicolas.remembering.entity.Teacher;
 import br.nicolas.remembering.enums.Discipline;
 import br.nicolas.remembering.enums.Shift;
 
-import java.util.List;
-
 public class EntityMock {
 
     public Teacher getTeacherMock () {
@@ -21,7 +19,6 @@ public class EntityMock {
 
     public Class getClassMock () {
         Class clasS = Class.builder()
-                .name("Class name test")
                 .discipline(Discipline.MATH)
                 .shift(Shift.EVENING)
                 .teacher(getTeacherMock())
@@ -39,9 +36,6 @@ public class EntityMock {
                 .name("Student name test")
                 .email("StudentTest@mail.com")
                 .password("StudentTest123")
-                .grades(List.of(10D, 10D, 10D))
-                .finalGrade(10D)
-                .isPassed(true)
                 .build();
     }
 }

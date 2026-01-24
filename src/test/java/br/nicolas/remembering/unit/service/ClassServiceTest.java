@@ -1,22 +1,17 @@
 package br.nicolas.remembering.unit.service;
 
-import br.nicolas.remembering.dto.clasS.ClassResponseDTO;
 import br.nicolas.remembering.entity.Class;
 import br.nicolas.remembering.entity.Teacher;
 import br.nicolas.remembering.entity_mock.EntityMock;
-import br.nicolas.remembering.mapper.ClassMapper;
 import br.nicolas.remembering.repository.ClassRepository;
-import br.nicolas.remembering.repository.TeacherRepository;
 import br.nicolas.remembering.service.ClassService;
 import br.nicolas.remembering.service.TeacherService;
-import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 import static org.mockito.Mockito.*;
@@ -63,6 +58,5 @@ class ClassServiceTest {
         Class found = service.findById(1L);
 
         Assertions.assertEquals(found.getId(), existing.getId());
-        Assertions.assertEquals(found.getName(), existing.getName());
     }
 }

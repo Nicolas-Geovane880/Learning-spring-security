@@ -1,13 +1,12 @@
 package br.nicolas.remembering.mapper;
 
-import br.nicolas.remembering.dto.clasS.ClassCreateDTO;
-import br.nicolas.remembering.dto.clasS.ClassResponseDTO;
+import br.nicolas.remembering.dto.classes.ClassCreateDTO;
+import br.nicolas.remembering.dto.classes.ClassResponseDTO;
 import br.nicolas.remembering.entity.Class;
 import br.nicolas.remembering.entity.Student;
 import br.nicolas.remembering.entity.Teacher;
 import br.nicolas.remembering.enums.Discipline;
 import br.nicolas.remembering.enums.Shift;
-import jakarta.validation.Valid;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

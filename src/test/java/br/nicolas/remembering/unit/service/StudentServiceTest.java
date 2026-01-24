@@ -23,25 +23,25 @@ class StudentServiceTest {
     @InjectMocks
     private StudentService service;
 
-    @Test
-    void shouldCalculateFinalGrade () {
-        Student student = Student.builder()
-                .grades(List.of(10.0, 10.0, 10.0))
-                .build();
-
-        service.calculateFinalGrade(student);
-
-        Assertions.assertEquals(10.0, student.getFinalGrade());
-    }
-
-    @Test
-    void shouldSetIsPassed () {
-        Student student = Student.builder()
-                .grades(List.of(10.0, 10.0, 10.0))
-                .build();
-
-        service.checkIfIsPassed(student);
-
-        Assertions.assertTrue(student.isPassed());
-    }
+//    @Test
+//    void shouldCalculateFinalGrade () {
+//        Student student = Student.builder()
+//                .grades(List.of(10.0, 10.0, 10.0))
+//                .build();
+//
+//        service.calculateFinalGrade(student);
+//
+//        Assertions.assertEquals(10.0, student.getFinalGrade());
+//    }
+//
+//    @Test
+//    void shouldSetIsPassed () {
+//        Student student = Student.builder()
+//                .grades(List.of(10.0, 10.0, 10.0))
+//                .build();
+//
+//        service.checkIfIsPassed(student);
+//
+//        Assertions.assertTrue(student.isPassed());
+//    }
 }

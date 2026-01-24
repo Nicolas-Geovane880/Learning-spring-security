@@ -17,9 +17,6 @@ public class Class {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (name = "class_name", nullable = false)
-    private String name;
-
     @Enumerated (value = EnumType.STRING)
     @Column (name = "class_discipline", nullable = false)
     private Discipline discipline;

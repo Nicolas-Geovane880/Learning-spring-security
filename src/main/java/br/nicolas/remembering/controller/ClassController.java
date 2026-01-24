@@ -1,11 +1,12 @@
 package br.nicolas.remembering.controller;
 
-import br.nicolas.remembering.dto.ApiResponse;
-import br.nicolas.remembering.dto.clasS.ClassCreateDTO;
-import br.nicolas.remembering.dto.clasS.ClassResponseDTO;
+import br.nicolas.remembering.dto.classes.ClassCreateDTO;
+import br.nicolas.remembering.dto.classes.ClassResponseDTO;
 import br.nicolas.remembering.entity.Class;
 import br.nicolas.remembering.mapper.ClassMapper;
 import br.nicolas.remembering.service.ClassService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,23 +21,19 @@ public class ClassController {
 
     private ClassMapper mapper;
 
-    @PostMapping(value = "/save")
-    public ResponseEntity<ApiResponse<ClassResponseDTO>> save (@RequestBody ClassCreateDTO createDTO) {
-        br.nicolas.remembering.entity.Class saved = service.save(mapper.parseToEntity(createDTO), createDTO.getTeacherId());
 
-        return new ResponseEntity<>(new ApiResponse<ClassResponseDTO>()
-                .setData(mapper.parseToResponse(saved))
-                .addMeta("message", "class created successfully"),
-                HttpStatus.CREATED);
+    @PostMapping(value = "/save")
+    public ResponseEntity<ClassResponseDTO> save (@Valid @RequestBody ClassCreateDTO createDTO) {
+        Class saved = service.save(mapper.parseToEntity(createDTO), createDTO.getTeacherId());
+
+        return new ResponseEntity<>(mapper.parseToResponse(saved), HttpStatus.CREATED);
     }
 
+
     @GetMapping(value = "/find/{id}")
-    public ResponseEntity<ApiResponse<ClassResponseDTO>> findById (@PathVariable Long id) {
+    public ResponseEntity<ClassResponseDTO> findById (@Positive @PathVariable Long id) {
         Class found = service.findById(id);
 
-        return new ResponseEntity<>(new ApiResponse<ClassResponseDTO>()
-                .setData(mapper.parseToResponse(found))
-                .addMeta("message", "class found successfully"),
-                HttpStatus.OK);
+        return new ResponseEntity<>(mapper.parseToResponse(found), HttpStatus.OK);
     }
 }
