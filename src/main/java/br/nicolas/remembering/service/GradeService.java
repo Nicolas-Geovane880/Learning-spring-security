@@ -1,9 +1,15 @@
 package br.nicolas.remembering.service;
 
+import br.nicolas.remembering.constant.ErrorMessage;
 import br.nicolas.remembering.dto.student.GradeDTO;
 import br.nicolas.remembering.entity.Student;
+import br.nicolas.remembering.exception.InvalidGradesException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service @AllArgsConstructor
@@ -11,24 +17,29 @@ public class GradeService {
 
     private StudentService studentService;
 
-
+    @Transactional
     public void setStudentGrades (GradeDTO gradesDTO) {
-        for (Double grade : gradesDTO.getGrades()) {
-            if (grade < 0 || grade > 10) throw new IllegalArgumentException("Grades have to be between 0 and 10");
-        }
+        Student foundStudent = studentService.findStudentById(gradesDTO.getStudentId());
 
-        Student foundStudent = studentService.findById(gradesDTO.getStudentId());
+        if (foundStudent.getGrades() != null) throw new InvalidGradesException(ErrorMessage.STUDENT_ALREADY_HAS_GRADE);
 
-        calculateAndCheckIfStudentIsPassed(foundStudent, gradesDTO.getGrades());
+        List<Double> grades = gradesDTO.getGrades().stream()
+                .map(o -> (Double) o)
+                .toList();
 
-        studentService.update(foundStudent);
+        Double finalGrade = calculateFinalGrade(foundStudent, grades);
+
+        foundStudent.setStudentGradesStatus(grades, finalGrade);
     }
 
+    public Double calculateFinalGrade(Student student, List<Double> grades) {
+        double finalGrade = grades.stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0);
 
-    public void calculateAndCheckIfStudentIsPassed (Student student, List<Double> grades) {
-        if (student.getGrades() != null) {
-            throw new IllegalArgumentException("Student already has grades");
-        }
-        student.calculateAndCheckIfStudentIsPassed(grades);
+        return BigDecimal.valueOf(finalGrade)
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 }

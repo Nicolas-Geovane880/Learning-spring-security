@@ -1,12 +1,20 @@
 package br.nicolas.remembering.service;
 
+import br.nicolas.remembering.constant.ErrorMessage;
+import br.nicolas.remembering.dto.student.StudentCreateDTO;
+import br.nicolas.remembering.dto.student.StudentResponseDTO;
+import br.nicolas.remembering.dto.student.StudentUpdateDTO;
 import br.nicolas.remembering.entity.Class;
 import br.nicolas.remembering.entity.Student;
+import br.nicolas.remembering.mapper.StudentMapper;
 import br.nicolas.remembering.repository.StudentRepository;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.NoSuchElementException;
 
 @Service @AllArgsConstructor
@@ -14,53 +22,62 @@ public class StudentService {
 
     private StudentRepository repository;
 
-    private ClassService classService;
+    private StudentMapper mapper;
 
-    private PasswordEncoder passwordEncoder;
+    @Transactional (readOnly = true)
+    public StudentResponseDTO getStudentById (Long studentId) {
+        Student foundStudent = findStudentById(studentId);
 
-    private EmailValidatorService emailValidatorService;
-
-
-    public Student save (Student student, Long classId) {
-        emailValidatorService.checkIfEmailIsAlreadyInUse(student.getEmail());
-
-        Class foundClass = classService.findById(classId);
-        student.setStudentClass(foundClass);
-
-        String hashPassword = passwordEncoder.encode(student.getPassword());
-        student.setPassword(hashPassword);
-
-        return repository.save(student);
+        return mapper.parseToResponse(foundStudent);
     }
 
-
-    public Student findById (Long id) {
+    @Transactional (readOnly = true)
+    public Student findStudentById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Student not found"));
+                .orElseThrow(() -> new NoSuchElementException(ErrorMessage.STUDENT_NOT_FOUND));
     }
-
 
     @Transactional
-    public Student updateFromRequest (Long id, Student updatedStudent) {
-        Student found = findById(id);
+    public StudentResponseDTO save (StudentCreateDTO dto, Class studentClass) {
+        Student student = mapper.parseToEntity(dto);
 
-        String newName = updatedStudent.getName();
-        String newEmail = updatedStudent.getEmail();
-        String newPassword = updatedStudent.getPassword();
+        studentClass.addStudent(student);
 
-        if (newEmail != null && !newEmail.equals(found.getEmail())) {
-            emailValidatorService.checkIfEmailIsAlreadyInUse(newEmail);
-            found.setEmail(newEmail);
-        }
-        if (newPassword != null && passwordEncoder.matches(newPassword, found.getPassword())) {
-            found.setPassword(passwordEncoder.encode(newPassword));
-        }
-        if (newName != null) found.setName(newName);
-
-        return repository.save(found);
+        return mapper.parseToResponse(repository.save(student));
     }
 
-    public void update (Student student) {
-        repository.save(student);
+    @Transactional
+    public StudentResponseDTO update (StudentUpdateDTO dto, Student currentStudent) {
+        mapper.updateEntityFromDTO(dto, currentStudent);
+
+        return mapper.parseToResponse(currentStudent);
+    }
+
+    @Transactional
+    public void delete(@Positive Long studentId) {
+        if (repository.existsById(studentId)) {
+            repository.deleteById(studentId);
+        }
+        else throw new NoSuchElementException(ErrorMessage.STUDENT_NOT_FOUND);
+    }
+
+    @Transactional (readOnly = true)
+    public Long findTeacherIdByStudentId (Long id) {
+        return repository.findTeacherIdByStudentId(id);
+    }
+
+    public Page<StudentResponseDTO> getAllPassedStudentsByClassId (Long id, int page, int size ) {
+        return repository.findPassedStudentsByClassId(id, PageRequest.of(page, size))
+                .map(mapper::parseToResponse);
+    }
+
+    @Transactional (readOnly = true)
+    public boolean existsByEmail (String email) {
+        return repository.existsByEmail(email);
+    }
+
+    @Transactional (readOnly = true)
+    public void removeClassesFromStudentsBeforeDelete (Long classId) {
+        repository.removeClassesFromStudents(classId);
     }
 }

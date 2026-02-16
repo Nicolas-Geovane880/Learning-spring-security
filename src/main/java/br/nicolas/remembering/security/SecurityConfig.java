@@ -24,6 +24,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/class/save").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/student/save").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/class/find/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/student/passed-by-class/{classId}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/class/all-by-discipline/{disciplineStr}").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/class/delete/{classId}").permitAll()
                         .anyRequest().authenticated()
                 ).httpBasic(Customizer.withDefaults());
 

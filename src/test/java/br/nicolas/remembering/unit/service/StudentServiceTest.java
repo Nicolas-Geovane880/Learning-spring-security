@@ -1,47 +1,41 @@
 package br.nicolas.remembering.unit.service;
 
-import br.nicolas.remembering.entity.Student;
+import br.nicolas.remembering.entity_mock.DTOMock;
+import br.nicolas.remembering.entity_mock.EntityMock;
+import br.nicolas.remembering.mapper.StudentMapper;
 import br.nicolas.remembering.repository.StudentRepository;
+import br.nicolas.remembering.service.ClassService;
 import br.nicolas.remembering.service.StudentService;
+import br.nicolas.remembering.service.EmailService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
 
-    @Mock
-    private StudentRepository repository;
-
     @InjectMocks
     private StudentService service;
 
-//    @Test
-//    void shouldCalculateFinalGrade () {
-//        Student student = Student.builder()
-//                .grades(List.of(10.0, 10.0, 10.0))
-//                .build();
-//
-//        service.calculateFinalGrade(student);
-//
-//        Assertions.assertEquals(10.0, student.getFinalGrade());
-//    }
-//
-//    @Test
-//    void shouldSetIsPassed () {
-//        Student student = Student.builder()
-//                .grades(List.of(10.0, 10.0, 10.0))
-//                .build();
-//
-//        service.checkIfIsPassed(student);
-//
-//        Assertions.assertTrue(student.isPassed());
-//    }
+    @Mock
+    private StudentRepository repository;
+
+    @Test
+    void shouldThrowExceptionIfStudentNotFound () {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(NoSuchElementException.class, () -> service.findStudentById(1L));
+    }
 }

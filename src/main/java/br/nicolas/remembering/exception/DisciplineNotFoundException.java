@@ -1,4 +1,4 @@
-package br.nicolas.remembering.exceptions;
+package br.nicolas.remembering.exception;
 
 public class DisciplineNotFoundException extends RuntimeException {
 

@@ -1,6 +1,6 @@
 package br.nicolas.remembering.enums;
 
-import br.nicolas.remembering.exceptions.ShiftNotFoundException;
+import br.nicolas.remembering.exception.ShiftNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,6 +19,6 @@ public enum Shift {
             if (s.name().equals(shiftStr.toUpperCase())) return s;
         }
 
-        throw new ShiftNotFoundException("Shift '%s' not found".formatted(shiftStr));
+        throw new ShiftNotFoundException(shiftStr);
     }
 }

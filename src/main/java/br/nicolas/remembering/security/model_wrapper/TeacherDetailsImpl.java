@@ -1,7 +1,6 @@
 package br.nicolas.remembering.security.model_wrapper;
 
 import br.nicolas.remembering.entity.Teacher;
-import br.nicolas.remembering.security.util.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,10 +1,14 @@
 package br.nicolas.remembering.service;
 
+import br.nicolas.remembering.constant.ConstantValues;
+import br.nicolas.remembering.constant.ErrorMessage;
+import br.nicolas.remembering.dto.teacher.TeacherCreateDTO;
+import br.nicolas.remembering.dto.teacher.TeacherResponseDTO;
+import br.nicolas.remembering.dto.teacher.TeacherUpdateDTO;
 import br.nicolas.remembering.entity.Teacher;
+import br.nicolas.remembering.mapper.TeacherMapper;
 import br.nicolas.remembering.repository.TeacherRepository;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.NoSuchElementException;
@@ -14,58 +18,54 @@ public class TeacherService {
 
     private TeacherRepository repository;
 
-    private PasswordEncoder passwordEncoder;
+    private TeacherMapper mapper;
 
-    private EmailValidatorService emailValidatorService;
+    @Transactional (readOnly = true)
+    public TeacherResponseDTO getTeacherById (Long teacherId) {
+        Teacher foundTeacher = findTeacherById(teacherId);
 
-
-    @Transactional
-    public Teacher save (Teacher teacher) {
-        emailValidatorService.checkIfEmailIsAlreadyInUse(teacher.getEmail());
-
-        String hashPassword = passwordEncoder.encode(teacher.getPassword());
-        teacher.setPassword(hashPassword);
-
-        return repository.save(teacher);
+        return mapper.parseToResponse(foundTeacher);
     }
 
-
-    @Transactional
-    public Teacher findById (Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Teacher not found"));
+    @Transactional (readOnly = true)
+    public Teacher findTeacherById(Long teacherId) {
+        return repository.findById(teacherId)
+                .orElseThrow(() -> new NoSuchElementException(ErrorMessage.TEACHER_NOT_FOUND));
     }
 
+    @Transactional
+    public TeacherResponseDTO save (TeacherCreateDTO createDTO) {
+        Teacher teacher = mapper.parseToEntity(createDTO);
 
-    public Teacher findByEmail (@NotNull String email) {
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException("Teacher not found"));
+        return mapper.parseToResponse(repository.save(teacher));
     }
 
+    @Transactional
+    public TeacherResponseDTO update (TeacherUpdateDTO updateDTO, Teacher currentTeacher) {
+        mapper.updateEntityFromDTO(updateDTO, currentTeacher);
+
+        return mapper.parseToResponse(currentTeacher);
+    }
 
     @Transactional
-    public Teacher update (Long id, Teacher updatedTeacher) {
-        Teacher found = findById(id);
-
-        String newName = updatedTeacher.getName();
-        String newEmail = updatedTeacher.getEmail();
-        String newPassword = updatedTeacher.getPassword();
-
-        if (updatedTeacher.getEmail() != null && !found.getEmail().equals(updatedTeacher.getEmail())) {
-            emailValidatorService.checkIfEmailIsAlreadyInUse(newEmail);
-            found.setEmail(newEmail);
+    public void delete(Long teacherId) {
+        if (repository.existsById(teacherId)) {
+            repository.deleteById(teacherId);
         }
-        if (newPassword != null && passwordEncoder.matches(newPassword, found.getPassword())) {
-            found.setPassword(passwordEncoder.encode(newPassword));
-        }
-        if (newName != null) found.setName(newName);
-
-        return repository.save(found);
+        else throw new NoSuchElementException(ErrorMessage.TEACHER_NOT_FOUND);
     }
 
+    public boolean checkIfTeacherCanLessonMoreClasses (int classCountByTeacher) {
+        return classCountByTeacher < ConstantValues.MAX_CLASSES_TEACHER_CAN_LESSON;
+    }
 
-    @Transactional
-    public void deleteById(Long id) {
-        repository.deleteById(id);
+    @Transactional (readOnly = true)
+    public boolean existsByEmail (String email) {
+        return repository.existsByEmail(email);
+    }
+
+    @Transactional (readOnly = true)
+    public boolean existsById (Long teacherId) {
+        return repository.existsById(teacherId);
     }
 }

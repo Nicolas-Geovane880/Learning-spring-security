@@ -3,28 +3,20 @@ package br.nicolas.remembering.entity;
 import br.nicolas.remembering.enums.UserRoles;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
+
 import java.util.List;
 
+import static br.nicolas.remembering.constant.ConstantValues.MINIMUM_GRADE_TO_PASS;
+
 @AllArgsConstructor @NoArgsConstructor @Getter
-@Setter @Builder @Entity @Table (name = "student")
-public class Student{
+@Setter @SuperBuilder @Entity @Table (name = "student")
+public class Student extends User{
 
-    @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn (name = "class_id", nullable = false)
     private Class studentClass;
-
-    @Column (name = "student_name", nullable = false)
-    private String name;
-
-    @Column (name = "student_email", nullable = false, unique = true)
-    private String email;
-
-    @Column (name = "student_password", nullable = false)
-    private String password;
 
     @Column (name = "student_grades")
     private String grades;
@@ -36,25 +28,14 @@ public class Student{
     private Boolean isPassed;
 
     @Builder.Default
-    @Column (name = "student_role", nullable = false)
+    @Column (name = "student_role")
     @Enumerated (value = EnumType.STRING)
     private final UserRoles role = UserRoles.STUDENT;
 
-    private Double calculateStudentFinalGrade(List<Double> grades) {
-        double finalGrade = grades.stream()
-                .mapToDouble(Double::doubleValue)
-                .average()
-                .orElse(0);
+    public void setStudentGradesStatus(List<Double> grades, double finalGrade) {
 
         this.grades = grades.toString();
         this.finalGrade = finalGrade;
-
-        return finalGrade;
-    }
-
-    public void calculateAndCheckIfStudentIsPassed(List<Double> grades) {
-        Double finalGrade = calculateStudentFinalGrade(grades);
-
-        this.isPassed = finalGrade >= 7;
+        this.isPassed = finalGrade >= MINIMUM_GRADE_TO_PASS;
     }
 }

@@ -18,8 +18,13 @@ spring:
     baseline-on-migration: true
     locations: classpath:db/migration
 
+  messages:
+    basename: messages
+    encoding: UTF-8
+
 logging:
   level:
+    root: WARN
     org:
       hibernate:
         SQL: DEBUG

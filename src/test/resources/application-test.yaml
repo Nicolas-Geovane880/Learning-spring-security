@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: testing-testcontainer
+  jpa:
+    show-sql: true
+    hibernate:
+      format-sql: true
+      ddl-auto: validate
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      max-lifetime: 300000
+      idle-timeout: 60000
+      connection-timeout: 30000
+logging:
+  level:
+    root: WARN
