@@ -113,6 +113,8 @@ rode em http://localhost:8080. Caso esteja rodando com docker-compose, rode em h
  - /api/v1/student/delete/{id} (requires id)
  - /api/v1/teacher/delete/{id} (requires id)
  - /api/v1/class/delete/{id} (requires id)
+ 
+ Não é necessário autenticação nos métodos POST (nas rotas de class, nenhum método é necessário autenticar)
 ````
 
 

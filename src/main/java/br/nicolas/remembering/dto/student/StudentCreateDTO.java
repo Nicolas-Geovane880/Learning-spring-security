@@ -1,6 +1,5 @@
 package br.nicolas.remembering.dto.student;
 
-import br.nicolas.remembering.annotation.UniqueEmailCreation;
 import br.nicolas.remembering.constant.ConstantValues;
 import br.nicolas.remembering.constant.ErrorMessage;
 import jakarta.validation.constraints.*;

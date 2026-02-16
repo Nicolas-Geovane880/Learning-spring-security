@@ -27,6 +27,7 @@ public class StudentController {
 
     @PostMapping (value = "/save")
     public ResponseEntity<StudentResponseDTO> save (@Valid @RequestBody StudentCreateDTO createDTO) {
+
         StudentResponseDTO studentResponse = academicOrchestrator.saveStudentWithClass(createDTO);
 
         return new ResponseEntity<>(studentResponse, HttpStatus.CREATED);
@@ -35,7 +36,7 @@ public class StudentController {
     @GetMapping (value = "/find/{studentId}")
     @PreAuthorize ("hasRole('ADMIN') or (hasRole('STUDENT') and @securityRoleFilterUtil.isIdOwner(authentication, #studentId))")
     public ResponseEntity<StudentResponseDTO> getStudentById(@Positive @PathVariable Long studentId) {
-        System.out.println("getting the student");
+
         StudentResponseDTO studentResponse = service.getStudentById(studentId);
 
         return new ResponseEntity<>(studentResponse, HttpStatus.OK);
@@ -45,8 +46,6 @@ public class StudentController {
     @PutMapping (value = "/update/{studentId}")
     public ResponseEntity<StudentResponseDTO> update (@Positive @PathVariable Long studentId,
                                                       @Valid @RequestBody StudentUpdateDTO updateDTO) {
-
-        System.out.println("DTO no Controller: " + updateDTO.getName());
 
         StudentResponseDTO studentResponse = academicOrchestrator.updateStudent(studentId, updateDTO);
 
