@@ -1,0 +1,2 @@
+ALTER TABLE class
+MODIFY COLUMN teacher_id BIGINT NULL;

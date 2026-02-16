@@ -1,13 +1,16 @@
-package br.nicolas.remembering.exceptions.details_global;
+package br.nicolas.remembering.global_handler;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @SuperBuilder @AllArgsConstructor @NoArgsConstructor @Getter @Setter
+@JsonInclude (value = JsonInclude.Include.NON_EMPTY)
 public class RequestDetailsException {
 
     protected int statusCode;
@@ -20,23 +23,19 @@ public class RequestDetailsException {
 
     protected String path;
 
-    protected LocalDate timestamp;
+    protected LocalDateTime timestamp;
 
-    public RequestDetailsException createDetails(HttpStatus status,
-                                                 String title,
-                                                 Exception e,
-                                                 WebRequest request) {
+    public static RequestDetailsException createDetails(HttpStatus status,
+                                                        WebRequest request) {
 
-        String method = request.getDescription(false).replace("uri=", "");
-        String path = ((ServletWebRequest) request).getRequest().getMethod();
+        String path = request.getDescription(false).replace("uri=", "");
+        String method = ((ServletWebRequest) request).getRequest().getMethod();
 
         return RequestDetailsException.builder()
                 .statusCode(status.value())
-                .title(title)
-                .message(e.getMessage())
                 .method(method)
                 .path(path)
-                .timestamp(LocalDate.now())
+                .timestamp(LocalDateTime.now())
                 .build();
     }
 }

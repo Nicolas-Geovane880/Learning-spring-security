@@ -6,42 +6,31 @@ import br.nicolas.remembering.entity.Teacher;
 import br.nicolas.remembering.enums.Discipline;
 import br.nicolas.remembering.enums.Shift;
 
-import java.util.List;
-
 public class EntityMock {
 
     public Teacher getTeacherMock () {
         return Teacher.builder()
-                .id(1L)
                 .name("Teacher name test")
                 .email("TeacherTest@mail.com")
                 .password("TeacherTest123")
                 .build();
     }
 
-    public Class getClassMock () {
-        Class clasS = Class.builder()
-                .name("Class name test")
+    public Class getClassMock (Teacher teacher) {
+        return Class.builder()
                 .discipline(Discipline.MATH)
+                .year(2022)
                 .shift(Shift.EVENING)
-                .teacher(getTeacherMock())
+                .teacher(teacher)
                 .build();
-
-        for (int i = 0; i < 5; i++) {
-            clasS.addStudent(getStudentMock());
-        }
-
-        return clasS;
     }
 
-    public Student getStudentMock () {
+    public Student getStudentMock (Class classes) {
         return Student.builder()
                 .name("Student name test")
                 .email("StudentTest@mail.com")
                 .password("StudentTest123")
-                .grades(List.of(10D, 10D, 10D))
-                .finalGrade(10D)
-                .isPassed(true)
+                .studentClass(classes)
                 .build();
     }
 }

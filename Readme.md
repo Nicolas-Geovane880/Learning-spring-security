@@ -1,38 +1,120 @@
-# Learning Spring security
+API REST desenvolvida com Spring Boot para gerenciamento acadêmico (alunos, professores e turmas), com autenticação e autorização via Spring Security.
 
- This project simulates a college, which has students, class and teachers.
+O projeto foi construído com foco em boas práticas de arquitetura backend: separação em camadas, DTOs, validação, mapeamento com MapStruct e regras de negócio em services.
+
+### Funcionalidades
+
+- Autenticação e Segurança
+- Login com autenticação baseada em credenciais
+- Criptografia de senha com BCrypt
+- Controle de acesso por roles (TEACHER, STUDENT)
+- Configuração de Spring Security desacoplada
+
+#### Alunos
+
+- Cadastro de aluno
+- Atualização de dados
+- Regras acadêmicas de aprovação
+
+#### Professores
+
+- Cadastro de professor
+- Atualização
+- Remoção
+
+#### Turmas
+
+- Criação de turmas
+- Associação de professor
+- Limite de alunos por turma
+
+### Arquitetura
+
+O projeto segue arquitetura em camadas:
+
+controller → mapper → service → repository  
+
+### Segurança
+
+- PasswordEncoder: BCrypt
+- UserDetails custom por tipo de usuário
+- Enum de roles
+- Filtro de autenticação
+- Configuração centralizada de Security
+
+### Persistência
+
+- Spring Data JPA/ Hibernate
+
+#### Relacionamentos:
+
+- Teacher → Classes (1:N)
+- Class → Students (1:N)
+- Student → Grades
+
+### Validação
+
+Validação com Bean Validation + regras de negócio em services.
+
+Exemplos:
+
+- Email válido
+- Senha obrigatória
+- Limite de alunos por turma
+- Limite de turmas por professor
+
+### Regras de Negócio
+
+- Professor possui limite máximo de turmas
+- Turma possui limite máximo de alunos
+- Aluno é aprovado conforme média de notas
+- Email único no sistema
+
+### Tecnologias
+
+- Java/Spring Boot
+- Spring Security
+- Spring Data JPA / Hibernate
+- MapStruct
+- Bean Validation
+- BCrypt
+- Maven
+- Docker
+- Flyway
+
+### Endpoints
+
+Alguns endpoints são necessários autenticação. Todos os endpoints foram acessados usando o PostMan.
+Basta ir na aba de Authorization, em Auth Type coloque Basic Auth (o campo "username" e "password" são respectivamente o email e a senha do usuário criado)
+
+Caso rode direto na IDE (na qual usa o banco baseado em memória H2)
+rode em http://localhost:8080. Caso esteja rodando com docker-compose, rode em http://localhost
+
+````
+ POST: Valores passados no corpo da requisição
+ - /api/v1/student/save (requires body)
+ - /api/v1/teacher/save (requires body)
+ - /api/v1/class/save (requires body)
+ - /api/v1/grade/set-grades (requires body)
  
- The main reason for this project exists is to learn how the spring security environment works.
+ GET: Valores passados na URL
+ - /api/v1/student/find/{id} (requres id)
+ - /api/v1/teacher/find/{id} (requires id)
+ - /api/v1/class/find/{id} (requires id)
+ - /api/v1/class/all-by-discipline/{discipline} (requires discipline)
+ - /api/v1/student/passed-by-class/{id} (requires id)
+   
+ PUT: Valores passados na URL e no corpo da requisição
+ - /api/v1/student/update/{id} (requires id and body)
+ - /api/v1/teacher/update/{id} (requires id and body)
+ - /api/v1/class/update/{id} (requires id and body)
  
- This project uses basic auth (I tested the requests via Postman), that just authenticate the users with username (their email) and password.
-
- #### Authorization
-
- After the authentication happens, the system will determinate what who can do.
-
- Example: students as well as teachers do not need to authenticate to create their profile, but they have to be authenticated to look, update or delete their profile. Students can 
- not manipulate teachers' profile because they have distinct roles, and vice versa.
-
- ### Technologies used
-
- - Postman
- - MySQL 
- - Docker
-
- I used Docker-compose to integrate the application with a MySQL database image.
-
- #### How to run the application with Docker-compose (in case you decide to pull this project): 
+ DELETE: Valores passados na URL 
+ - /api/v1/student/delete/{id} (requires id)
+ - /api/v1/teacher/delete/{id} (requires id)
+ - /api/v1/class/delete/{id} (requires id)
  
- - Create the .env file and insert the database data in the variables environment according to the .env-example (or insert directly in the docker-compose.yml)
- - Open the terminal into the application root directory
- - Make sure that you have Docker Desktop installed and running
- - Type 'docker-compose up --build -d' 
- - Type 'docker ps' or 'docker container ps' to check if the containers are running
- - Send requests to the via browser/postman or another program (url: http://localhost/api/v1/teacher/find/1, since the application runs on the port 80, it is not necessary to inform the port in the url)
+ Não é necessário autenticação nos métodos POST (nas rotas de class, nenhum método é necessário autenticar)
+````
 
- If you want to run the application directly in the IDE, navigate to the Main class and click on the run button
- (In this case, the application will use the H2 database based on memory. Inform the port 8080 in the url: http://localhost:8080/api/v1/teacher/find/1)
 
- Next commits will conclude the project and implement new features soon.
-
- 

@@ -1,13 +1,16 @@
 package br.nicolas.remembering.service;
 
+import br.nicolas.remembering.constant.ConstantValues;
+import br.nicolas.remembering.constant.ErrorMessage;
+import br.nicolas.remembering.dto.teacher.TeacherCreateDTO;
+import br.nicolas.remembering.dto.teacher.TeacherResponseDTO;
+import br.nicolas.remembering.dto.teacher.TeacherUpdateDTO;
 import br.nicolas.remembering.entity.Teacher;
-import br.nicolas.remembering.exceptions.InvalidRequestValueException;
+import br.nicolas.remembering.mapper.TeacherMapper;
 import br.nicolas.remembering.repository.TeacherRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.NoSuchElementException;
 
 @Service @AllArgsConstructor
@@ -15,54 +18,54 @@ public class TeacherService {
 
     private TeacherRepository repository;
 
-    private PasswordEncoder passwordEncoder;
+    private TeacherMapper mapper;
 
-    public Teacher save (Teacher teacher) {
-        String hashPass = passwordEncoder.encode(teacher.getPassword());
-        teacher.setPassword(hashPass);
+    @Transactional (readOnly = true)
+    public TeacherResponseDTO getTeacherById (Long teacherId) {
+        Teacher foundTeacher = findTeacherById(teacherId);
 
-        return repository.save(teacher);
+        return mapper.parseToResponse(foundTeacher);
     }
 
-    public Teacher findById (Long id) {
-        if (id == null || id <= 0) throw new InvalidRequestValueException("Id is invalid");
-
-        return repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Teacher not found"));
+    @Transactional (readOnly = true)
+    public Teacher findTeacherById(Long teacherId) {
+        return repository.findById(teacherId)
+                .orElseThrow(() -> new NoSuchElementException(ErrorMessage.TEACHER_NOT_FOUND));
     }
 
-    public Teacher findByEmail (String email) {
-        if (email == null) throw new InvalidRequestValueException("Email is invalid");
+    @Transactional
+    public TeacherResponseDTO save (TeacherCreateDTO createDTO) {
+        Teacher teacher = mapper.parseToEntity(createDTO);
 
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException("Teacher not found"));
+        return mapper.parseToResponse(repository.save(teacher));
     }
 
-    public Teacher update (Long id, Teacher updatedTeacher) {
-        if (id == null || id <= 0) throw new InvalidRequestValueException("Id is invalid");
+    @Transactional
+    public TeacherResponseDTO update (TeacherUpdateDTO updateDTO, Teacher currentTeacher) {
+        mapper.updateEntityFromDTO(updateDTO, currentTeacher);
 
-        Teacher found = findById(id);
+        return mapper.parseToResponse(currentTeacher);
+    }
 
-        String newName = updatedTeacher.getName();
-        String newEmail = updatedTeacher.getEmail();
-        String newPassword = updatedTeacher.getPassword();
-
-        if (updatedTeacher.getEmail() != null && !found.getEmail().equals(updatedTeacher.getEmail())) {
-            if (repository.findByEmail(newEmail).isPresent()) {
-                throw new IllegalArgumentException("Email already in use");
-            }
-            found.setEmail(newEmail);
+    @Transactional
+    public void delete(Long teacherId) {
+        if (repository.existsById(teacherId)) {
+            repository.deleteById(teacherId);
         }
-
-        if (newName != null) found.setName(newName);
-        if (newPassword != null) found.setPassword(passwordEncoder.encode(newPassword));
-
-        return repository.save(found);
+        else throw new NoSuchElementException(ErrorMessage.TEACHER_NOT_FOUND);
     }
 
-    public void deleteById(Long id) {
-        if (id == null || id <= 0) throw new InvalidRequestValueException("Id is invalid");
+    public boolean checkIfTeacherCanLessonMoreClasses (int classCountByTeacher) {
+        return classCountByTeacher < ConstantValues.MAX_CLASSES_TEACHER_CAN_LESSON;
+    }
 
-        repository.deleteById(id);
+    @Transactional (readOnly = true)
+    public boolean existsByEmail (String email) {
+        return repository.existsByEmail(email);
+    }
+
+    @Transactional (readOnly = true)
+    public boolean existsById (Long teacherId) {
+        return repository.existsById(teacherId);
     }
 }

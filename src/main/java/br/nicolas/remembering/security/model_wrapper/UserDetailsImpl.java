@@ -1,4 +1,4 @@
-package br.nicolas.remembering.security.util;
+package br.nicolas.remembering.security.model_wrapper;
 
 import org.springframework.security.core.userdetails.UserDetails;
 

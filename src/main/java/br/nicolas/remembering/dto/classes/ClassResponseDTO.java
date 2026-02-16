@@ -1,15 +1,13 @@
-package br.nicolas.remembering.dto.clasS;
+package br.nicolas.remembering.dto.classes;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
-@Builder
+@Getter @Builder @Setter
 public class ClassResponseDTO {
 
     private Long id;
-
-    private String name;
 
     private String discipline;
 
@@ -17,5 +15,5 @@ public class ClassResponseDTO {
 
     private String teacherName;
 
-    private int studentsNumber;
+    private int studentCount;
 }

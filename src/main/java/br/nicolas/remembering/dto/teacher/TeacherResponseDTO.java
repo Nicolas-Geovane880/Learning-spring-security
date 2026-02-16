@@ -6,10 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter @AllArgsConstructor
+@NoArgsConstructor @Builder
 @JsonPropertyOrder (value = {"id", "name", "email"})
 public class TeacherResponseDTO {
 

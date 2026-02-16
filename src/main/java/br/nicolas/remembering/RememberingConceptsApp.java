@@ -11,4 +11,3 @@ public class RememberingConceptsApp {
     }
 }
 
-//C:\Users\niinc\Desktop\learning.spring.boot\11_RememberingAllConcepts\target\classes
